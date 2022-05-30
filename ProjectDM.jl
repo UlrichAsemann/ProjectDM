@@ -15,8 +15,5 @@ using GLMakie
 
 
 
-asdasdasd
-asdasd
-
 
 end # of NBodies
