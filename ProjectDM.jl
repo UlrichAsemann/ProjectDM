@@ -1,7 +1,6 @@
 #========================================================================================#
 
 """
-
     Version 1 des Projektes
     
 """
@@ -11,6 +10,15 @@ module NBodies
 
 # Nutzung von GLMakie für die Animation
 using GLMakie
+
+mutable struct NBody
+    
+    
+
+
+
+
+end
 
 
 
