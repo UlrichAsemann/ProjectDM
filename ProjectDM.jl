@@ -107,10 +107,35 @@ end
 	rk2!( nbody::NBody)
 
 Perform a single RK2-step of the given NBody system.
+Change of RK2 to RK4!
 """
 function rk2!( nb::NBody)
+
+	# Half-Timestep:
 	dt2 = nb.dt/2
 
+	# Evaluation of k1:
+	xk1 = nb.x
+	pk1 = nb.p
+
+	# Evaluation of k2:
+	xk2 = nb.x + dt2 * pk1./nb.m
+	pk2 = nb.p + dt2 * forceOnMasses(xk1 ,nb.m)
+
+	# Evaluation of k3:
+	xk3 = nb.x + dt2 * pk2./nb.m
+	pk3 = nb.p + dt2 * forceOnMasses(xk2, nb.m)
+
+	# Evaluation of k4:
+	xk4 = nb.x + nb.dt * pk3./nb.m
+	pk4 = nb.p + nb.dt * forceOnMasses(xk3, nb.m) 
+	
+	# Full-Step:
+	nb.x = nb.x + nb.dt * 1/6 * (pk1./nb.m + 2pk2./nb.m + 2pk3./nb.m + pk4./nb.m)
+	nb.p = nb.p + nb.dt * 1/6 * (forceOnMasses(xk1, nb.m) + 2*forceOnMasses(xk2, nb.m) + 2*forceOnMasses(xk3, nb.m) + forceOnMasses(xk4, nb.m))
+
+	"""
+	RK2-method (original)
 	# Half-step:
 	xh = nb.x + dt2 * nb.p./nb.m
 	ph = nb.p + dt2 * forceOnMasses(nb.x,nb.m)
@@ -118,6 +143,7 @@ function rk2!( nb::NBody)
 	# Full-step:
 	nb.x = nb.x + nb.dt * ph./nb.m
 	nb.p = nb.p + nb.dt * forceOnMasses(xh,nb.m)
+	"""
 end
 
 #-----------------------------------------------------------------------------------------
