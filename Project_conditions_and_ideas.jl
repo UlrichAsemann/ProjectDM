@@ -8,9 +8,6 @@ Fokus:
 Effizienz z.B. Zeit oder wenig Chaos bis neues Gleichgewicht!
 Kein Kollision miteinander!
 
-Code:
-	- Erweiterung des vorhandenen Codes
-	- kein komplett eigenes neues Projekt
 
 
 Bedingungen:
@@ -22,9 +19,13 @@ Your project deliverable is a Julia module that must fulfil the following constr
 	- demonstrates that the motion is indeed chaotic (passiert mehr oder weniger automatisch/3-Körper-System)
 	- displays explanatory text so that anyone can understand it WITHOUT studying the code! (Dokumentation des Codes für Erklärungen)
 	- the code must be neat, well documented and easily readable and comprehensible.
+	- Arbeit muss Modul/Klasse entahlten, die als Herzstück fungiert.
+	- Diese Klasse soll andere Klassen als Serverklassen nutzen, um die Aufgabe zu lösen
+	- Sauber Programmieren (Einrückungen, Kommentare, Kapselung)
 
-	- RK-4 verwenden oder höher (MUST HAVE) (eventuell RK-8)
-	- konzeptuelle Gesamtgeschichte mit innovativem Aspekt:
+	- RK-4 verwenden oder höher (MUST HAVE) (eventuell RK-8) DONE!!!
+
+	- konzeptuelle Gesamtgeschichte mit innovativem Aspekt: 
 		- Bedrohung der Erde durch den Mond
 		- Ersetzung des Mondes durch einen neuen Körper
 		- Mond wird aus dem System gebracht
@@ -37,29 +38,6 @@ Video zu NBodies in Matlab:
 
 
 """
-Ideen für Aufbau des Codes:
-
-Benötigte Parameter für die Körper:
-    - m: 		Masse (einzeln)
-	- [x y]: 	Anfangskoordinaten (Vektor) (Arbeiten mit Matrixmanipulation)
-	- v:		Anfangsgeschwindigkeit (Wie bewegt sich der Körper im System)
-    
-Benötigte Parameter für das System:
-	- T:		Simulationslänge
-	- Δt:		Schrittgröße zwischen den einzelnen Simulationsschritten 
-	- n:		Anzahl an Körpern im System
-
-Benötigte Methoden:
-	- Berechnung der relativen Position zu den anderen Körpern
-	- Berechnung der Anziehungskraft zueinander durch Newtons Gravitationsgesetz
-		--> Dadurch Berechnung der neuen Positionen der Körper
-
-Voraussetzungen:
-	- Verwendung von GLMakie
-	- Verwendung von RK-2 zur Berechnung der Simulationsschritte
-	- Verwendung gegebener Massen von Mond und Erde
-	- Finden der optimalen Parameter, um Frage zu beantworten!!!
-
 Sonstiges (unwichtig am Anfang):
 	- Überlegung der Fenstergröße der Simulation
 	- Überlegung Aufbau der Simulation
