@@ -15,16 +15,13 @@ in which three bodies (2 Suns and a very lonely! planet) orbit around each other
 Author: Niall Palfreyman, 29/05/2022.
 """
 
-
-
-
-
 #Übernahme des Projektes von Herr Palfreyman und Erweiterung des Codes durch Ulrich Asemann.
 
 
 module NBodies
 
 using GLMakie
+using LinearAlgebra
 
 #-----------------------------------------------------------------------------------------
 # Module types:
@@ -95,7 +92,7 @@ function simulate( nb::NBody)
 	x[1] = nb.x0
 	p[1] = nb.p0
 
-	# Simulation using RK2 method:
+	# Simulation using RK4 method:
 	for n = 1:nb.nsteps
 		rk2!(nb)
 		x[n+1] = nb.x
@@ -207,6 +204,22 @@ end
 
 #-----------------------------------------------------------------------------------------
 """
+	energy(nb::NBody)
+
+Evaluating the energy in the system to check, if the energy stays the same, wins or loses energy
+"""
+
+function energy(nb::NBody)
+
+	energy = 1/2 * nb.m .* (nb.p./nb.m)
+
+	energy
+
+
+end
+
+#-----------------------------------------------------------------------------------------
+"""
 	demo()
 
 Demonstrate simulation of a simple 2-body problem in a simple 3-step use-case.
@@ -241,7 +254,30 @@ function demo2()
 	t,x = simulate(nb)
 
 	# Run the animation:
-	animate( nb, t, x)
+	animate(nb, t, x)	
+end
+
+function demo3()
+	# Build the 3-body system:
+	nb = NBody( 20, 1000)
+	addbody!( nb, [0.0, 1.0],	[ 0.8, 0.0], 	2.0)		# Sun 1 (m = 2)
+	addbody!( nb, [0.0,-1.0],	[-0.8, 0.0],	1.0)		# Sun 2 (m = 1)
+	addbody!( nb, [3.0, 0.0],	[ 0.0, 0.1],	0.2)		# Planet (m = 0.2)
+	
+
+	a = (nb.p./nb.m)
+	a'
+	diag(a*a')
+
+	[[a[1] .* a[1]]; [a[2] .* a[2]]; [a[3] .* a[3]]]
+	[a[1:length(a)].*a[1:length(a)]]
+
+
+	# Run the simulation:
+	#t,x = simulate(nb)
+
+	# Run the animation:
+	#animate(nb, t, x)	
 end
 
 end		# of NBodies
