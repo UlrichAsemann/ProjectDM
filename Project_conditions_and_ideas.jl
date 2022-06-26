@@ -17,27 +17,28 @@ Video zu NBodies in Matlab:
 	
 To-Do:
 
-	- Funktionsweise innerhalb des eigenen Ordners							(Projekt mit zweitem Dokument in einem Ornder, Fertigstellung am Ende)
+	- Funktionsweise innerhalb des eigenen Ordners							Angefangen (Projekt mit zweitem Dokument in einem Ornder, Fertigstellung am Ende)
 	- 3 oder mehr Körper innerhalb des Systems (chaotisches Verhalten)		(Erledigung durch Fragestellung)
 	- Berechnung der Energieerhaltung										DONE
 	- Demonstration, dass das Verhalten chaotisch ist (Berechnung)			? (siehe Dokument Melli)
-	- Code-Dokumentation													?
-	- Code schön und ordentlich gestalten									?
+	- Code-Dokumentation	(schön und ordentlich)							?
 	- Weitere Klasse/Datei, die auf Klasse zugreift (Serverklasse)			?
-	- Kollision berechnen (evtl.)											(Überlegung für ZUsatz des Projektes)
+	- Kollision berechnen (evtl.)											(Überlegung für Zusatz des Projektes)
 	- Anpassung Berechnung Gravitation										In Bearbeitung
 		- Gravitationskonstante												DONE
-		- Abstände															Angefangen (Fertigstellung bei Beantwirtung Fragestellung, im Moment in Kilimeter statt Meter)
+		- Abstände															Angefangen (Fertigstellung bei Beantwirtung Fragestellung, im Moment in Kilometer statt Meter)
 		- Geschwindigkeit													Angefangen (Im Moment Höher als eigentlich, Beachtung von Momentum, Masse * Geschwindigkeit)
 		- Fokus der Animation (Größe der Plotvariablen)						Angefangen (siehe Abstände/Geschwindigkeit, Massen sind eingetragen)
 	- RK4																	DONE 
 
 
-	
+
 	- Eigene Demo schreiben für Projekt
 		- Fokus auf Effizienz
 		- wenig Zeit bis neues Gleichgewicht entsteht
 		- keine Kollision der Körper miteinander
+		- Anpassung Simulationslänge
+		- Evtl. Sonne mit dazunehmen
 	- 
 
 """;

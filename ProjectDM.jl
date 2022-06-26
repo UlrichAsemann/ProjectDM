@@ -94,7 +94,7 @@ function simulate( nb::NBody)
 
 	# Simulation using RK4 method:
 	for n = 1:nb.nsteps
-		rk2!(nb)
+		rk4!(nb)
 		x[n+1] = nb.x
 		p[n+1] = nb.p
 	end
@@ -109,7 +109,7 @@ end
 Perform a single RK2-step of the given NBody system.
 Change of RK2 to RK4!
 """
-function rk2!( nb::NBody)
+function rk4!( nb::NBody)
 
 	# Half-Timestep:
 	dt2 = nb.dt/2
