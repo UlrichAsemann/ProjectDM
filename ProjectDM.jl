@@ -150,14 +150,16 @@ end
 """
 	forceOnMasses( locations::Vector, masses::Vector)
 
-Internal utility function: Calculate all gravitational forces between the N bodies with
-the given mass at the given locations.
-This method is based on the following Newtonian formula:
+	Internal utility function: Calculate all gravitational forces between the N bodies with
+	the given mass at the given locations.
+	This method is based on the following Newtonian formula:
+
+	G =  6,67259 * 10^-11(N*m^2)/kg^2
 
 	F_ij = Force on i-th body due to j-th body = - (G m_i m_j / |r_i-r_j|^3) * vec(r_i-r_j)
 """
 function forceOnMasses( locations::Vector, masses::Vector)
-	G = 1.0												# Newton's gravitational constant
+	G = 6.67259e-11										# Newton's gravitational constant
 	gmm = G * masses * masses'							# Precalculate products between the masses
 
 	locnPerBody = repeat(locations,1,length(locations))	# Matrix of body locations beside each other
@@ -175,8 +177,8 @@ end
 """
 	animate( nb::NBody, t, x)
 
-Animate the simulation data (t,x) of the given NBody system.
-This implementation is identical to that of version 3.
+	Animate the simulation data (t,x) of the given NBody system.
+	This implementation is identical to that of version 3.
 """
 function animate( nb::NBody, t, x)
 	# Prepare an Observable containing the initial x/y coordinate for each body:
@@ -185,10 +187,10 @@ function animate( nb::NBody, t, x)
 	timestamp = Observable( string( "t = ", round(t[1], digits=2)))
 
 	# Prepare the animation graphics:
-	fig = Figure(resolution=(1200, 1200))
+	fig = Figure(resolution=(900, 900))
 	ax = Axis(fig[1, 1], xlabel = "x", ylabel = "y", title = "N-body 2D Motion")
-	limits!( ax, -5, 5, -5, 5)
-	scatter!( ax, x_current, y_current, markersize=(50nb.m), color=:blue)
+	limits!( ax, -800000, 800000, -800000, 800000)
+	scatter!( ax, x_current, y_current, markersize=(100), color=:blue)
 	text!( timestamp, position=(-2.5, 2.5), textsize=30, align=(:left,:center))
 	display(fig)
 
@@ -206,10 +208,10 @@ end
 """
 	energy(nb::NBody)
 
-Evaluating the energy in the system to check, if the energy stays the same, wins or loses energy
+	Evaluating the energy in the system to check, if the energy stays the same, wins or loses energy
 """
 
-function energycalc(nb::NBody)
+function energy_calc(nb::NBody)
 
 	v = nb.p./nb.m
 	v_squared = copy(v)
@@ -236,7 +238,7 @@ end
 """
 	demo()
 
-Demonstrate simulation of a simple 2-body problem in a simple 3-step use-case.
+	Demonstrate simulation of a simple 2-body problem in a simple 3-step use-case.
 """
 function demo()
 	# Build the 2-body system:
@@ -255,7 +257,7 @@ end
 """
 	demo2()
 
-Demonstrate simulation of a chaotic 3-body system.
+	Demonstrate simulation of a chaotic 3-body system.
 """
 function demo2()
 	# Build the 3-body system:
@@ -272,16 +274,49 @@ function demo2()
 end
 
 function demo3()
+	"""
+	Demo zur Implementierung der neuen physikalischen Größen
+	Gravitatonskonstante etc.
+
+	m_erde = 5,972 *10^24kg
+	m_mond = 7,3483 * 10^22kg
+
+	G =  6,67259 * 10^-11(N*m^2)/kg^2
+
+	Distannz Mond zu Erde: 384 400km
+	"""
+	# Build the 3-body system:
+	nb = NBody(100, 1000)
+
+	m_sun = 1.989e30
+	addbody!( nb, [ 0.0, 0.0],		[ 0.0, 0.0], 	5.972e24 )		# Earth
+	addbody!( nb, [ 384400.0, 0.0],	[ 0.0, 2.5e27],	7.3483e22)		# Moon
+	#addbody!( nb, [ 0.0, 0.0],		[ 0.0, 0.0],	m_sun)			# Sun
+
+	# Beachtung von Momentum. Geschwindigkeit mal Masse!!!
+	
+	# Run the simulation:
+	t,x = simulate(nb)
+
+	# Run the animation:
+	animate(nb, t, x)	
+end
+
+function demo4()
 	# Build the 3-body system:
 	nb = NBody( 20, 1000)
 	addbody!( nb, [0.0, 1.0],	[ 0.8, 0.0], 	2.0)		# Sun 1 (m = 2)
 	addbody!( nb, [0.0,-1.0],	[-0.8, 0.0],	1.0)		# Sun 2 (m = 1)
 	addbody!( nb, [3.0, 0.0],	[ 0.0, 0.1],	0.2)		# Planet (m = 0.2)
 	
-	nb.p./nb.m
-	energycalc(nb)
+	"""
+	Testverfahren zur Implementierung von energy_calc und RK4
 
-	sum(diag(diag(energycalc(nb).*energycalc(nb)')[3]))
+
+	nb.p./nb.m
+	energy_calc(nb)
+
+	sum(diag(diag(energy_calc(nb).*energy_calc(nb)')[3]))
 	length(nb.p)
 	a = (nb.p./nb.m)
 	a[1]*a[1]'
@@ -298,6 +333,7 @@ function demo3()
 
 	[[a[1] .* a[1]]; [a[2] .* a[2]]; [a[3] .* a[3]]]
 	[a[1:length(a)].*a[1:length(a)]]
+	"""
 
 
 	# Run the simulation:
