@@ -209,12 +209,26 @@ end
 Evaluating the energy in the system to check, if the energy stays the same, wins or loses energy
 """
 
-function energy(nb::NBody)
+function energycalc(nb::NBody)
 
-	energy = 1/2 * nb.m .* (nb.p./nb.m)
+	v = nb.p./nb.m
+	v_squared = copy(v)
+
+	for i in 1:length(nb.p)
+		
+		v_squared[i] = diag(v[i].*v[i]')
+	end
+
+	energy_xy = 1/2 .* nb.m .* v_squared
+
+	energy = zeros(length(energy_xy))
+
+	for j in 1:length(energy_xy)
+		
+		energy[j] = sqrt(sum(diag(diag(energy_xy.*energy_xy')[j])))
+	end
 
 	energy
-
 
 end
 
@@ -264,10 +278,23 @@ function demo3()
 	addbody!( nb, [0.0,-1.0],	[-0.8, 0.0],	1.0)		# Sun 2 (m = 1)
 	addbody!( nb, [3.0, 0.0],	[ 0.0, 0.1],	0.2)		# Planet (m = 0.2)
 	
+	nb.p./nb.m
+	energycalc(nb)
 
+	sum(diag(diag(energycalc(nb).*energycalc(nb)')[3]))
+	length(nb.p)
 	a = (nb.p./nb.m)
+	a[1]*a[1]'
+	diag(a[1]*a[1]')
 	a'
-	diag(a*a')
+	b = diag(a*a')
+	b[1][1]
+
+	016*016
+	64*64
+	0.04*0.04
+	0.25*0.25
+
 
 	[[a[1] .* a[1]]; [a[2] .* a[2]]; [a[3] .* a[3]]]
 	[a[1:length(a)].*a[1:length(a)]]
