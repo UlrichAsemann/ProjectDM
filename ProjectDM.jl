@@ -41,6 +41,8 @@ mutable struct NBody
 	m							# Masses of bodies
 	x							# Current position of system
 	p							# Current momentum of system
+	e							# Current energy of system
+	size						# Size of the body
 
 	"Construct a new NBody"
 	function NBody( T=40, resolution=20000, G=1)
@@ -53,7 +55,9 @@ mutable struct NBody
 			[],					# Initial momenta
 			[],					# Masses of bodies
 			[],					# Current position empty
-			[]					# Current momentum empty
+			[],					# Current momentum empty
+			[],					# Current energy empty
+			[]					# Size of body
 		)
 	end
 end
@@ -64,16 +68,17 @@ end
 """
 	addbody!( nbody::NBody, x0::Vector{Float64}, p0::Vector{Float64}, m::Float64=1)
 
-Add to the system a new body with initial position and momentum x0, p0, and with mass m.
+Add to the system a new body with initial position and momentum x0, p0, and with mass m. And size size.
 The new structure elements nb.x and nb.p represent the current position and momentum of the
 bodies, which will be constantly updated during the simulation.
 """
-function addbody!( nbody::NBody, x0::Vector{Float64}, p0::Vector{Float64}, m::Float64=1.0)
+function addbody!( nbody::NBody, x0::Vector{Float64}, p0::Vector{Float64}, m::Float64=1.0, size::Float64=1.0)
 	push!( nbody.x0, x0)
 	push!( nbody.x, deepcopy(x0))					# Question: Why do I use deepcopy here?
 	push!( nbody.p0, p0)
 	push!( nbody.p, deepcopy(p0))
 	push!( nbody.m, m)
+	push!( nbody.size, size)
 	nbody.N  += 1
 end
 
@@ -87,27 +92,30 @@ function simulate( nb::NBody)
 	t = 0:nb.dt:nb.nsteps*nb.dt
 	x = Vector{typeof(nb.x0)}(undef,nb.nsteps+1)
 	p = Vector{typeof(nb.p0)}(undef,nb.nsteps+1)
+	e = Vector{typeof(nb.e )}(undef,nb.nsteps+1)
 
 	# Initialisation:
 	x[1] = nb.x0
 	p[1] = nb.p0
+	e[1] = energy_calc(nb)
 
 	# Simulation using RK4 method:
 	for n = 1:nb.nsteps
 		rk4!(nb)
 		x[n+1] = nb.x
 		p[n+1] = nb.p
+		e[n+1] = energy_calc(nb)
 	end
 
-	(t,x,p)
+	(t,x,e,p)
 end
 
 #-----------------------------------------------------------------------------------------
 """
-	rk2!( nbody::NBody)
+	rk4!( nbody::NBody)
 
-Perform a single RK2-step of the given NBody system.
-Change of RK2 to RK4!
+	Perform a single RK2-step of the given NBody system.
+	Change of RK2 to RK4!
 """
 function rk4!( nb::NBody)
 
@@ -180,18 +188,20 @@ end
 	Animate the simulation data (t,x) of the given NBody system.
 	This implementation is identical to that of version 3.
 """
-function animate( nb::NBody, t, x)
+function animate( nb::NBody, t, x, e)
 	# Prepare an Observable containing the initial x/y coordinate for each body:
 	x_current = Observable( map( bodycoords->bodycoords[1], x[1]))
 	y_current = Observable( map( bodycoords->bodycoords[2], x[1]))
 	timestamp = Observable( string( "t = ", round(t[1], digits=2)))
+	energy    = Observable( string( "energy = ", e[1]))
 
 	# Prepare the animation graphics:
 	fig = Figure(resolution=(900, 900))
 	ax = Axis(fig[1, 1], xlabel = "x", ylabel = "y", title = "N-body 2D Motion")
-	limits!( ax, -800000, 800000, -800000, 800000)
-	scatter!( ax, x_current, y_current, markersize=(100), color=:blue)
-	text!( timestamp, position=(-2.5, 2.5), textsize=30, align=(:left,:center))
+	limits!( ax, -1e9, 1e9, -1e9, 1e9)
+	scatter!( ax, x_current, y_current, markersize=(nb.size), color=:blue)
+	text!( timestamp, position=(-0.9e9, -0.9e9), textsize=30, align=(:left,:center))
+	text!( energy, position=(-0.9e9, 0.9e9), textsize=30, align=(:left,:center))
 	display(fig)
 
 	# Run the animation:
@@ -199,6 +209,7 @@ function animate( nb::NBody, t, x)
 		x_current[] = map( bodycoords->bodycoords[1], x[i])
 		y_current[] = map( bodycoords->bodycoords[2], x[i])
 		timestamp[] = string( "t = ", round(t[i], digits=2))
+		energy[]	= string( "energy = ", round(sum(e[i]), digits=-27))
 
 		sleep(1e-4)
 	end
@@ -230,6 +241,8 @@ function energy_calc(nb::NBody)
 		energy[j] = sqrt(sum(diag(diag(energy_xy.*energy_xy')[j])))
 	end
 
+	#v_squared
+	#energy_xy
 	energy
 
 end
@@ -262,19 +275,22 @@ end
 function demo2()
 	# Build the 3-body system:
 	nb = NBody( 20, 1000)
-	addbody!( nb, [0.0, 1.0],	[ 0.8, 0.0], 	2.0)		# Sun 1 (m = 2)
-	addbody!( nb, [0.0,-1.0],	[-0.8, 0.0],	1.0)		# Sun 2 (m = 1)
-	addbody!( nb, [3.0, 0.0],	[ 0.0, 0.1],	0.2)		# Planet (m = 0.2)
+	addbody!( nb, [0.0, 1.0],	[ 0.8, 0.0], 	2.0, 2.0)		# Sun 1 (m = 2)
+	addbody!( nb, [0.0,-1.0],	[-0.8, 0.0],	1.0, 1.0)		# Sun 2 (m = 1)
+	addbody!( nb, [3.0, 0.0],	[ 0.0, 0.1],	0.2, 0.2)		# Planet (m = 0.2)
+
+	energy_calc(nb)
 	
 	# Run the simulation:
-	t,x = simulate(nb)
+	t,x,e = simulate(nb)
 
 	# Run the animation:
-	animate(nb, t, x)	
+	animate(nb, t, x, e)	
 end
 
 function demo3()
 	"""
+Demo der Erde
 	Demo zur Implementierung der neuen physikalischen Größen
 	Gravitatonskonstante etc.
 
@@ -284,22 +300,37 @@ function demo3()
 	G =  6,67259 * 10^-11(N*m^2)/kg^2
 
 	Distannz Mond zu Erde: 384 400km
-	"""
-	# Build the 3-body system:
-	nb = NBody(100, 1000)
 
-	m_sun = 1.989e30
-	addbody!( nb, [ 0.0, 0.0],		[ 0.0, 0.0], 	5.972e24 )		# Earth
-	addbody!( nb, [ 384400.0, 0.0],	[ 0.0, 2.5e27],	7.3483e22)		# Moon
-	#addbody!( nb, [ 0.0, 0.0],		[ 0.0, 0.0],	m_sun)			# Sun
+	Größenverhältnis Erde zu Mond: 1 zu 3,7
+	"""
+
+	# Build the 3-body system:
+	nb = NBody(10000000, 1000)
+
+	m_sun = 1.989e30 #kg 
+	v_moon = 1023 #m/s
+	m_moon = 7.3483e22 #kg
+
+
+	addbody!( nb, [ 0.0, 0.0],			[ 0.0, 0.0], 			5.972e24, 		74.0)		# Earth
+	addbody!( nb, [ 384400000.0, 0.0],	[ 0.0, m_moon*v_moon],	m_moon,      	20.0)		# Moon
+	#addbody!( nb, [ 0.0, 0.0],			[ 0.0, 0.0],	m_sun)							# 3rd Body
+
+
+	#energy_calc(nb)
+	#sum(energy_calc(nb))
+
+
 
 	# Beachtung von Momentum. Geschwindigkeit mal Masse!!!
 	
 	# Run the simulation:
-	t,x = simulate(nb)
+	t,x,e = simulate(nb)
+
+	e
 
 	# Run the animation:
-	animate(nb, t, x)	
+	animate(nb, t, x, e)	
 end
 
 function demo4()
