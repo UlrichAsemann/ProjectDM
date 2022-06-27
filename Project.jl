@@ -14,3 +14,25 @@ nb = Main.NBodies.NBody(100, 1000)
 #addbody!( nb, [ 0.0, 0.0],		[ 0.0, 0.0], 	5.972e24 )		# Earth
 #addbody!( nb, [ 384400.0, 0.0],	[ 0.0, 2.5e27],	7.3483e22)		# Moon
 #addbody!( nb, [ 0.0, 0.0],		[ 0.0, 0.0],	m_sun)			# Sun
+
+
+
+
+"""
+Testbereich
+"""
+
+
+
+a = [[1,2],
+[2,-2]]
+
+b = [[1,1],
+    [-1,-1]]
+
+a*b'
+
+[x^2 for x in 1:12 if isodd(x)]
+
+
+

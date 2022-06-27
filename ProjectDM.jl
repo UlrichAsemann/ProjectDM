@@ -256,14 +256,14 @@ end
 function demo()
 	# Build the 2-body system:
 	nb = NBody( 20, 1000)								# 20 time units divided into 1000 steps
-	addbody!( nb, [0.0, 1.0], [ 0.8,0.0], 2.0)			# Sun (m = 2)
-	addbody!( nb, [0.0,-1.0], [-0.8,0.0])				# Planet (m = 1)
+	addbody!( nb, [0.0, 1.0], [ 0.8,0.0], 2.0, 1.0)			# Sun (m = 2)
+	addbody!( nb, [0.0,-1.0], [-0.8,0.0], 1.0, 1.0)				# Planet (m = 1)
 	
 	# Calculate the simulation data:
-	(t,x) = simulate(nb)
+	(t,x,e) = simulate(nb)
 
 	# Run the animation:
-	animate( nb, t, x)
+	animate( nb, t, x, e)
 end
 
 #-----------------------------------------------------------------------------------------
@@ -316,8 +316,9 @@ Demo der Erde
 	addbody!( nb, [ 384400000.0, 0.0],	[ 0.0, m_moon*v_moon],	m_moon,      	20.0)		# Moon
 	#addbody!( nb, [ 0.0, 0.0],			[ 0.0, 0.0],	m_sun)							# 3rd Body
 
+	nb.p
 
-	#energy_calc(nb)
+	energy_calc(nb)
 	#sum(energy_calc(nb))
 
 
@@ -327,7 +328,9 @@ Demo der Erde
 	# Run the simulation:
 	t,x,e = simulate(nb)
 
-	e
+	e[1],
+	e[2]
+
 
 	# Run the animation:
 	animate(nb, t, x, e)	
