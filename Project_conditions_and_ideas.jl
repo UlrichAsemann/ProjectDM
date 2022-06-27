@@ -21,7 +21,7 @@ To-Do:
 	- Weitere Klasse/Datei, die auf Klasse zugreift (Serverklasse)			?
 
 	- 3 oder mehr Körper innerhalb des Systems (chaotisches Verhalten)		(Erledigung durch Fragestellung)
-	- Berechnung der Energieerhaltung										Angefangen (Werte Überprüfen, Prof. fragen) 			!!!
+	- Berechnung der Energieerhaltung										Angefangen (Werte Überprüfen, Prof. fragen, negatove Werte mit berechnen, um summe zu erhalten) 			!!!
 	- Demonstration, dass das Verhalten chaotisch ist (Berechnung)			? (siehe Dokument Melli)
 	- Code-Dokumentation	(schön und ordentlich)							?
 	- Kollision berechnen (evtl.)											(Überlegung für Zusatz des Projektes, Prof. fragen)		!!!
