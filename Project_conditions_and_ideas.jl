@@ -41,7 +41,7 @@ To-Do:
 		- wenig Zeit bis neues Gleichgewicht entsteht
 		- keine Kollision der Körper miteinander
 		- Anpassung Simulationslänge
-		- Evtl. Sonne mit dazunehmen
+		- Evtl. Sonne mit dazunehmen										(Prof. fragen) !!!
 	- 
 
 """;
