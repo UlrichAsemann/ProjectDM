@@ -29,9 +29,8 @@ To-Do:
 		- Gravitationskonstante												DONE
 		- Abstände															DONE
 		- Geschwindigkeit													DONE
-		- Fokus der Animation (Größe der Plotvariablen)						DONE
+		- Fokus der Animation (Größe der Plotvariablen, evtl besser machen)	DONE ?
 		- Größe Himmelskörper anpassen										DONE
-		- 
 
 	- RK4 eventuell RK8, da Energieschwankung sehr hoch						DONE (?) (Prof. fragen) 								!!!
 
