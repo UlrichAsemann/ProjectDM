@@ -92,22 +92,25 @@ function simulate( nb::NBody)
 	t = 0:nb.dt:nb.nsteps*nb.dt
 	x = Vector{typeof(nb.x0)}(undef,nb.nsteps+1)
 	p = Vector{typeof(nb.p0)}(undef,nb.nsteps+1)
-	e = Vector{typeof(nb.e )}(undef,nb.nsteps+1)
+	ex = Vector{Float64}(undef,nb.nsteps+1)
+	ey = Vector{Float64}(undef,nb.nsteps+1)
 
 	# Initialisation:
 	x[1] = nb.x0
 	p[1] = nb.p0
-	e[1] = energy_calc(nb)
+	ex[1] = energy_calc(nb)[1]
+	ey[1] = energy_calc(nb)[2]
 
 	# Simulation using RK4 method:
 	for n = 1:nb.nsteps
 		rk4!(nb)
 		x[n+1] = nb.x
 		p[n+1] = nb.p
-		e[n+1] = energy_calc(nb)
+		ex[n+1] = energy_calc(nb)[1]
+		ey[n+1] = energy_calc(nb)[2]
 	end
 
-	(t,x,e,p)
+	(t,x,ex,ey,p)
 end
 
 #-----------------------------------------------------------------------------------------
@@ -188,12 +191,13 @@ end
 	Animate the simulation data (t,x) of the given NBody system.
 	This implementation is identical to that of version 3.
 """
-function animate( nb::NBody, t, x, e)
+function animate( nb::NBody, t, x, ex, ey)
 	# Prepare an Observable containing the initial x/y coordinate for each body:
 	x_current = Observable( map( bodycoords->bodycoords[1], x[1]))
 	y_current = Observable( map( bodycoords->bodycoords[2], x[1]))
 	timestamp = Observable( string( "t = ", round(t[1], digits=2)))
-	energy    = Observable( string( "energy = ", e[1]))
+	energy_x  = Observable( string( "energy_x = ", ex[1]))
+	energy_y  = Observable( string( "energy_y = ", ey[1]))
 
 	# Prepare the animation graphics:
 	fig = Figure(resolution=(900, 900))
@@ -201,7 +205,8 @@ function animate( nb::NBody, t, x, e)
 	limits!( ax, -1e9, 1e9, -1e9, 1e9)
 	scatter!( ax, x_current, y_current, markersize=(nb.size), color=:blue)
 	text!( timestamp, position=(-0.9e9, -0.9e9), textsize=30, align=(:left,:center))
-	text!( energy, position=(-0.9e9, 0.9e9), textsize=30, align=(:left,:center))
+	text!( energy_x, position=(-0.9e9, 0.9e9), textsize=20, align=(:left,:center))
+	text!( energy_y, position=(-0.9e9, 0.7e9), textsize=20, align=(:left,:center))
 	display(fig)
 
 
@@ -210,7 +215,8 @@ function animate( nb::NBody, t, x, e)
 		x_current[] = map( bodycoords->bodycoords[1], x[i])
 		y_current[] = map( bodycoords->bodycoords[2], x[i])
 		timestamp[] = string( "t = ", round(t[i], digits=2))
-		energy[]	= string( "energy = ", round(sum(e[i]), digits=-27))
+		energy_x[]	= string( "energy_x = ", ex[i])
+		energy_y[]	= string( "energy_y = ", ey[i])
 
 		sleep(1e-4)
 	end
@@ -247,23 +253,25 @@ function energy_calc(nb::NBody)
 
 	energybodies_xy = 1/2 .* nb.m .* v_squared
 
-	energy_xy = zeros(length(energybodies_xy))
+	energy_xy = zeros(length(energybodies_xy)) 		#??? Fehlersuche
 
-	diag(energybodies_xy.*energybodies_xy')
+	precalc = diag(energybodies_xy.*v_direction')
 
 	
-	for i in 1:length(energybodies_xy)
+	for i in 1:2, j in 1:length(energybodies_xy)
 		
-		energy_xy[i] = sqrt(sum(diag(diag(energybodies_xy.*energybodies_xy')[i])))
+		energy_xy[i] += diag(precalc[j])[i]			#??? Fehlersuche, eventuell Fehler durch Größe der Variablen bei der Demo
+													#				  eventuell dort den Fehler finden?
 	end
 	
 
 	#v
 	#v_squared
 	#v_direction
-	energybodies_xy
-	#energy
-	
+	#diag(energybodies_xy.*v_direction')
+	energy_xy
+	#energybodies_xy
+	#diag(precalc[1])
 
 end
 
@@ -325,7 +333,7 @@ Demo der Erde
 	"""
 
 	# Build the 3-body system:
-	nb = NBody(10000000, 1000)
+	nb = NBody(10000000, 10000)
 
 	m_sun = 1.989e30 #kg 
 	v_moon = 1023 #m/s
@@ -334,29 +342,20 @@ Demo der Erde
 
 	addbody!( nb, [ 0.0, 0.0],			[ 0.0, 	0.0], 			5.972e24, 		74.0)		# Earth
 	addbody!( nb, [ 384400000.0, 0.0],	[ 0.0, m_moon*v_moon],	m_moon,      	20.0)		# Moon
-	#addbody!( nb, [ 0.0, 0.0],			[ 0.0, 0.0],	m_sun)							# 3rd Body
-
+	#addbody!( nb, [ -384400000.0, 0.0],	[ 0.0, -m_moon*v_moon],	m_moon,      	20.0)
 	
-	#diag(nb.p./nb.m .* (nb.p./nb.m)')
-	
-
 	energy_calc(nb)
 
-	sum(energy_calc(nb))
-
-
-
-	# Beachtung von Momentum. Geschwindigkeit mal Masse!!!
 	
 	# Run the simulation:
-	t,x,e = simulate(nb)
+	t,x,ex,ey = simulate(nb)
 
-	e[1],
-	e[2]
+	ex[1], ex[2], ex[3]
+	x[1], x[2]
 
 
 	# Run the animation:
-	animate(nb, t, x, e)	
+	animate(nb, t, x, ex, ey)	
 end
 
 function demo4()
