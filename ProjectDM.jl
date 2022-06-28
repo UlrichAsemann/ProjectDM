@@ -204,6 +204,7 @@ function animate( nb::NBody, t, x, e)
 	text!( energy, position=(-0.9e9, 0.9e9), textsize=30, align=(:left,:center))
 	display(fig)
 
+
 	# Run the animation:
 	for i in 1:nb.nsteps+1
 		x_current[] = map( bodycoords->bodycoords[1], x[i])
@@ -225,25 +226,44 @@ end
 function energy_calc(nb::NBody)
 
 	v = nb.p./nb.m
-	v_squared = copy(v)
+	
+	v_squared = deepcopy(v)
+	
+	v_direction = deepcopy(v)
+
+	for i in 1:length(nb.p), j in 1:2
+
+		if v[i][j] >= 0.0
+			v_direction[i][j] = 1
+		else
+			v_direction[i][j] = -1
+		end
+	end
 
 	for i in 1:length(nb.p)
 		
 		v_squared[i] = diag(v[i].*v[i]')
 	end
 
-	energy_xy = 1/2 .* nb.m .* v_squared
+	energybodies_xy = 1/2 .* nb.m .* v_squared
 
-	energy = zeros(length(energy_xy))
+	energy_xy = zeros(length(energybodies_xy))
 
-	for j in 1:length(energy_xy)
+	diag(energybodies_xy.*energybodies_xy')
+
+	
+	for i in 1:length(energybodies_xy)
 		
-		energy[j] = sqrt(sum(diag(diag(energy_xy.*energy_xy')[j])))
+		energy_xy[i] = sqrt(sum(diag(diag(energybodies_xy.*energybodies_xy')[i])))
 	end
+	
 
+	#v
 	#v_squared
-	#energy_xy
-	energy
+	#v_direction
+	energybodies_xy
+	#energy
+	
 
 end
 
@@ -312,14 +332,17 @@ Demo der Erde
 	m_moon = 7.3483e22 #kg
 
 
-	addbody!( nb, [ 0.0, 0.0],			[ 0.0, 0.0], 			5.972e24, 		74.0)		# Earth
+	addbody!( nb, [ 0.0, 0.0],			[ 0.0, 	0.0], 			5.972e24, 		74.0)		# Earth
 	addbody!( nb, [ 384400000.0, 0.0],	[ 0.0, m_moon*v_moon],	m_moon,      	20.0)		# Moon
 	#addbody!( nb, [ 0.0, 0.0],			[ 0.0, 0.0],	m_sun)							# 3rd Body
 
-	nb.p
+	
+	#diag(nb.p./nb.m .* (nb.p./nb.m)')
+	
 
 	energy_calc(nb)
-	#sum(energy_calc(nb))
+
+	sum(energy_calc(nb))
 
 
 

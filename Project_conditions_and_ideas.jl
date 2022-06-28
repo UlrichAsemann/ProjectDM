@@ -21,8 +21,8 @@ To-Do:
 	- Weitere Klasse/Datei, die auf Klasse zugreift (Serverklasse)			?
 
 	- 3 oder mehr Körper innerhalb des Systems (chaotisches Verhalten)		(Erledigung durch Fragestellung)
-	- Berechnung der Energieerhaltung										Angefangen (Werte Überprüfen, Prof. fragen, negatove Werte mit berechnen, um summe zu erhalten) 			!!!
-	- Demonstration, dass das Verhalten chaotisch ist (Berechnung)			? (siehe Dokument Melli)
+	- Berechnung der Energieerhaltung										Angefangen (Werte Überprüfen, negative Werte mit berechnen, um summe zu erhalten) 		!!!
+	- Demonstration, dass das Verhalten chaotisch ist (Berechnung)			(siehe Dokument Melli) (Wahrscheinlich nicht benötigt, da Chaos nicht Ziel des Projekts ist)
 	- Code-Dokumentation	(schön und ordentlich)							?
 	- Kollision berechnen (evtl.)											(Überlegung für Zusatz des Projektes, Prof. fragen)		!!!
 	- Anpassung Berechnung Gravitation										In Bearbeitung
@@ -32,16 +32,16 @@ To-Do:
 		- Fokus der Animation (Größe der Plotvariablen, evtl besser machen)	DONE ?
 		- Größe Himmelskörper anpassen										DONE
 
-	- RK4 eventuell RK8, da Energieschwankung sehr hoch						DONE (?) (Prof. fragen) 								!!!
+	- RK4 eventuell RK8, da Energieschwankung sehr hoch						DONE (Porblem liegt bei Energierberchnung) (?)
 
 
 
 	- Eigene Demo schreiben für Projekt
 		- Fokus auf Effizienz
+		- Fokus auf Genauigkeit (Exaktes System)
 		- wenig Zeit bis neues Gleichgewicht entsteht
 		- keine Kollision der Körper miteinander
 		- Anpassung Simulationslänge
-		- Evtl. Sonne mit dazunehmen										(Prof. fragen) !!!
-	- 
+		- Geschichte wird in Demo erzählt (Bewertung des herausgefundenen Systems)
 
 """;
