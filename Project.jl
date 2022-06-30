@@ -7,32 +7,27 @@
 include("ProjectDM.jl")
 using NBodies
 
-# Build the 3-body system:
-nb = Main.NBodies.NBody(100, 1000)
-
-#m_sun = 1.989e30
-#addbody!( nb, [ 0.0, 0.0],		[ 0.0, 0.0], 	5.972e24 )		# Earth
-#addbody!( nb, [ 384400.0, 0.0],	[ 0.0, 2.5e27],	7.3483e22)		# Moon
-#addbody!( nb, [ 0.0, 0.0],		[ 0.0, 0.0],	m_sun)			# Sun
-
+nb = NBody(10000000, 1000)
 
 
 
 """
-Testbereich
+m_sun = 1.989e30 #kg 
+v_moon = 1023 #m/s
+m_moon = 7.3483e22 #kg
+
+
+addbody!( nb, [ 0.0, 0.0],			[ 0.0, 	0.0], 			5.972e24, 		74.0)		# Earth
+addbody!( nb, [ 384400000.0, 0.0],	[ 0.0, m_moon*v_moon],	m_moon,      	20.0)		# Moon
+#addbody!( nb, [ -384400000.0, 0.0],	[ 0.0, -m_moon*v_moon],	m_moon,      	20.0)
+
+energy_calc(nb)
+
+
+# Run the simulation:
+t,x,e = simulate(nb)
+
+# Run the animation:
+animate(nb, t, x, e)	
 """
-
-
-
-a = [[1,2],
-[2,-2]]
-
-b = [[1,1],
-    [-1,-1]]
-
-a*b'
-
-[x^2 for x in 1:12 if isodd(x)]
-
-
 
