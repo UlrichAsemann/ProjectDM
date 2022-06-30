@@ -15,7 +15,7 @@ in which three bodies (2 Suns and a very lonely! planet) orbit around each other
 Author: Niall Palfreyman, 29/05/2022.
 """
 
-#Übernahme des Projektes von Herr Palfreyman und Erweiterung des Codes durch Ulrich Asemann.
+# Additional code written by Ulrich Asemann
 
 
 module NBodies
@@ -74,7 +74,7 @@ bodies, which will be constantly updated during the simulation.
 """
 function addbody!( nbody::NBody, x0::Vector{Float64}, p0::Vector{Float64}, m::Float64=1.0, size::Float64=1.0)
 	push!( nbody.x0, x0)
-	push!( nbody.x, deepcopy(x0))					# Question: Why do I use deepcopy here?
+	push!( nbody.x, deepcopy(x0))
 	push!( nbody.p0, p0)
 	push!( nbody.p, deepcopy(p0))
 	push!( nbody.m, m)
@@ -97,7 +97,7 @@ function simulate( nb::NBody)
 	# Initialisation:
 	x[1] = nb.x0
 	p[1] = nb.p0
-	e[1] = energy_calc(nb)
+	e[1] = energy_calc(nb)			# using energy_calc() to calculate the energy of the system
 
 	# Simulation using RK4 method:
 	for n = 1:nb.nsteps
@@ -114,12 +114,14 @@ end
 """
 	rk4!( nbody::NBody)
 
-	Perform a single RK2-step of the given NBody system.
-	Change of RK2 to RK4!
+	Perform a single RK4-step of the given NBody system.
+
+	Calculating the different slopes k1, k2, k3 and k4 to calcualte the slope for the current value.
+	Formula for x: x[n+1] = x[n] + Δt * 1/6 * (k1 + 2*k2 + 2*k3 + k4)
 """
 function rk4!( nb::NBody)
 
-	# Half-Timestep:
+	# Half-timestep:
 	dt2 = nb.dt/2
 
 	# Evaluation of k1:
@@ -138,20 +140,10 @@ function rk4!( nb::NBody)
 	xk4 = nb.x + nb.dt * pk3./nb.m
 	pk4 = nb.p + nb.dt * forceOnMasses(xk3, nb.m) 
 	
-	# Full-Step:
+	# Evaluation of full-step:
 	nb.x = nb.x + nb.dt * 1/6 * (pk1./nb.m + 2pk2./nb.m + 2pk3./nb.m + pk4./nb.m)
 	nb.p = nb.p + nb.dt * 1/6 * (forceOnMasses(xk1, nb.m) + 2*forceOnMasses(xk2, nb.m) + 2*forceOnMasses(xk3, nb.m) + forceOnMasses(xk4, nb.m))
 
-	"""
-	RK2-method (original)
-	# Half-step:
-	xh = nb.x + dt2 * nb.p./nb.m
-	ph = nb.p + dt2 * forceOnMasses(nb.x,nb.m)
-	
-	# Full-step:
-	nb.x = nb.x + nb.dt * ph./nb.m
-	nb.p = nb.p + nb.dt * forceOnMasses(xh,nb.m)
-	"""
 end
 
 #-----------------------------------------------------------------------------------------
@@ -163,6 +155,7 @@ end
 	This method is based on the following Newtonian formula:
 
 	G =  6,67259 * 10^-11(N*m^2)/kg^2
+	Using the gravitational constant for a near real system.
 
 	F_ij = Force on i-th body due to j-th body = - (G m_i m_j / |r_i-r_j|^3) * vec(r_i-r_j)
 """
@@ -183,13 +176,13 @@ end
 
 #-----------------------------------------------------------------------------------------
 """
-	animate( nb::NBody, t, x)
+	animate( nb::NBody, t, x, e)
 
-	Animate the simulation data (t,x) of the given NBody system.
+	Animate the simulation data (t,x,e) of the given NBody system.
 	This implementation is identical to that of version 3.
 """
 function animate( nb::NBody, t, x, e)
-	# Prepare an Observable containing the initial x/y coordinate for each body:
+	# Prepare an Observable containing the initial x/y coordinate and energy for each body:
 	x_current = Observable( map( bodycoords->bodycoords[1], x[1]))
 	y_current = Observable( map( bodycoords->bodycoords[2], x[1]))
 	timestamp = Observable( string( "t = ", round(t[1], digits=2)))
@@ -220,24 +213,27 @@ end
 """
 	energy(nb::NBody)
 
-	Evaluating the energy in the system to check, if the energy stays the same, wins or loses energy
+	Evaluating the energy in the system to check, if the energy stays the same, so the animation is realistic or not
+	Formula: EKin = 1/2 * m * v^2
 """
 
 function energy_calc(nb::NBody)
 
+	# Transforming the momentum into velocity
 	v = hcat(nb.p./nb.m)
 
-	number_dimensions = 2
+	v_value = zeros(length(nb.p))  
 
-	v_value = zeros(number_dimensions)
-
+	# Calculating the velocity for each body
 	for i in 1:length(nb.p)
 		
 		v_value[i] = sqrt(sum(v[i].^2))
 	end
 
+	# Calculating the energy of the system
 	systemenergy = sum(1/2*(nb.m.*(v_value.^2)))
 
+	# Giving back the whole energy of the system
 	systemenergy
 end
 
@@ -283,7 +279,7 @@ function demo2()
 end
 
 function demo3()
-"""
+	"""
 	Demo der Erde
 	Demo zur Implementierung der neuen physikalischen Größen
 	Gravitatonskonstante etc.
@@ -296,7 +292,7 @@ function demo3()
 	Distannz Mond zu Erde: 384 400km
 
 	Größenverhältnis Erde zu Mond: 1 zu 3,7
-"""
+	"""
 
 	# Build the 3-body system:
 	nb = NBody(10000000, 1000)
@@ -308,7 +304,7 @@ function demo3()
 
 	addbody!( nb, [ 0.0, 0.0],			[ 0.0, 	0.0], 			5.972e24, 		74.0)		# Earth
 	addbody!( nb, [ 384400000.0, 0.0],	[ 0.0, m_moon*v_moon],	m_moon,      	20.0)		# Moon
-	#addbody!( nb, [ -384400000.0, 0.0],	[ 0.0, -m_moon*v_moon],	m_moon,      	20.0)
+	addbody!( nb, [ -384400000.0, 0.0],	[ 0.0, -m_moon*v_moon],	m_moon,      	20.0)
 	
 	energy_calc(nb)
 

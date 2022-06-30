@@ -7,6 +7,11 @@
 include("ProjectDM.jl")
 using .NBodies
 
+"""
+
+"""
+
+
 nb = NBodies.NBody(10000000, 1000)
 
 
@@ -19,8 +24,7 @@ m_moon = 7.3483e22 #kg
 
 NBodies.addbody!( nb, [ 0.0, 0.0],			[ 0.0, 	0.0], 			5.972e24, 		74.0)		# Earth
 NBodies.addbody!( nb, [ 384400000.0, 0.0],	[ 0.0, m_moon*v_moon],	m_moon,      	20.0)		# Moon
-
-
+NBodies.addbody!( nb, [ -384400000.0, 0.0],	[ 0.0, -m_moon*v_moon],	m_moon,      	20.0)		# Moon
 
 # Run the simulation:
 t,x,e = NBodies.simulate(nb)

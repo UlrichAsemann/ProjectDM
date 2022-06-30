@@ -17,12 +17,12 @@ Video zu NBodies in Matlab:
 	
 To-Do:
 
-	- Funktionsweise innerhalb des eigenen Ordners							Angefangen (Projekt mit zweitem Dokument in einem Ornder, Fertigstellung am Ende)
-	- Weitere Klasse/Datei, die auf Klasse zugreift (Serverklasse)			?
+	- Funktionsweise innerhalb des eigenen Ordners							DONE
+	- Weitere Klasse/Datei, die auf Klasse zugreift (Serverklasse)			DONE
 
 	- 3 oder mehr Körper innerhalb des Systems (chaotisches Verhalten)		(Erledigung durch Fragestellung)
 	- Berechnung der Energieerhaltung										DONE
-	- Code-Dokumentation	(schön und ordentlich)							?
+	- Code-Dokumentation	(schön und ordentlich)							Angefangen (Löschen von Demos)
 	- Anpassung Berechnung Gravitation										DONE
 		- Gravitationskonstante												DONE
 		- Abstände															DONE
