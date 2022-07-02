@@ -45,7 +45,7 @@ mutable struct NBody
 	size						# Size of the body
 
 	"Construct a new NBody"
-	function NBody( T=40, resolution=20000, G=1)
+	function NBody( T=40, resolution=20000)
 		# Initialise all fields of the decoding apparatus:
 		new(
 			0,					# Initially no bodies in the system
@@ -99,7 +99,7 @@ function simulate( nb::NBody)
 	p[1] = nb.p0
 	e[1] = energy_calc(nb)			# using energy_calc() to calculate the energy of the system
 
-	# Simulation using RK4 method:
+	# Simulation using RK4 method and energy-calc():
 	for n = 1:nb.nsteps
 		rk4!(nb)
 		x[n+1] = nb.x
@@ -213,7 +213,7 @@ end
 """
 	energy(nb::NBody)
 
-	Evaluating the energy in the system to check, if the energy stays the same, so the animation is realistic or not
+	Evaluating the kinetic energy in the system to check, if the energy stays the same, so the animation is realistic or not
 	Formula: EKin = 1/2 * m * v^2
 """
 

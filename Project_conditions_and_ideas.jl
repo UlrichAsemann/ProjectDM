@@ -21,13 +21,13 @@ To-Do:
 	- Weitere Klasse/Datei, die auf Klasse zugreift (Serverklasse)			DONE
 
 	- 3 oder mehr Körper innerhalb des Systems (chaotisches Verhalten)		(Erledigung durch Fragestellung)
-	- Berechnung der Energieerhaltung										DONE
+	- Berechnung der Energieerhaltung										DONE ? (Nochmal verfeineren eventuell!!!)
 	- Code-Dokumentation	(schön und ordentlich)							Angefangen (Löschen von Demos)
 	- Anpassung Berechnung Gravitation										DONE
 		- Gravitationskonstante												DONE
 		- Abstände															DONE
 		- Geschwindigkeit													DONE
-		- Fokus der Animation (Größe der Plotvariablen, evtl besser machen)	?
+		- Fokus der Animation 												? (Größe der Achsen anpassen mit Entfernungen der Planeten)
 		- Größe Himmelskörper anpassen										DONE
 
 	- RK4 eventuell RK8, da Energieschwankung sehr hoch						DONE
