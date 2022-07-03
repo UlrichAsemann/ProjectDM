@@ -20,9 +20,8 @@ To-Do:
 	- Funktionsweise innerhalb des eigenen Ordners							DONE
 	- Weitere Klasse/Datei, die auf Klasse zugreift (Serverklasse)			DONE
 
-	- 3 oder mehr Körper innerhalb des Systems (chaotisches Verhalten)		(Erledigung durch Fragestellung)
-	- Berechnung der Energieerhaltung										DONE ? (Nochmal verfeineren eventuell!!!)
-	- Code-Dokumentation	(schön und ordentlich)							Angefangen (Löschen von Demos)
+	- Berechnung der Energieerhaltung										DONE
+	- Code-Dokumentation	(schön und ordentlich)							Angefangen (Löschen von Demo)
 	- Anpassung Berechnung Gravitation										DONE
 		- Gravitationskonstante												DONE
 		- Abstände															DONE
@@ -35,6 +34,7 @@ To-Do:
 
 
 	- Eigene Demo schreiben für Projekt
+		- 3-Körper System
 		- Fokus auf Effizienz
 		- Fokus auf Genauigkeit (Exaktes System)
 		- wenig Zeit bis neues Gleichgewicht entsteht

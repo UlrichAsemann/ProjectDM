@@ -176,6 +176,21 @@ end
 
 #-----------------------------------------------------------------------------------------
 """
+	relpos(locations::Vector)
+
+	Function to calculate the relative positions from each body to another
+
+"""
+function relpos(locations::Vector)
+
+	locnPerBody = repeat(locations,1,length(locations))	
+	relpos = locnPerBody - permutedims(locnPerBody)			
+
+	relpos
+end
+
+#-----------------------------------------------------------------------------------------
+"""
 	animate( nb::NBody, t, x, e)
 
 	Animate the simulation data (t,x,e) of the given NBody system.
@@ -211,74 +226,42 @@ end
 
 #-----------------------------------------------------------------------------------------
 """
-	energy(nb::NBody)
+	energy_calc(nb::NBody)
 
-	Evaluating the kinetic energy in the system to check, if the energy stays the same, so the animation is realistic or not
-	Formula: EKin = 1/2 * m * v^2
+	Evaluating the potential energy in the system to check, if the energy stays the same, so the animation is realistic or not
+	Formula: EPot = G * M * m * (1/r1 - 1/r2)
 """
-
 function energy_calc(nb::NBody)
 
-	# Transforming the momentum into velocity
-	v = hcat(nb.p./nb.m)
+	# Gravitational constant
+	G = 6.67259e-11		
 
-	v_value = zeros(length(nb.p))  
+	# Precalculating -(G * M * m)
+	gmm = -(G * nb.m * nb.m')
 
-	# Calculating the velocity for each body
-	for i in 1:length(nb.p)
-		
-		v_value[i] = sqrt(sum(v[i].^2))
-	end
+	# Calculating the relative positions of each body to another
+	rel_pos = relpos(nb.x)
 
-	# Calculating the energy of the system
-	systemenergy = sum(1/2*(nb.m.*(v_value.^2)))
+	# Calculating the magnitude of the distance between each body
+	xvalue_ij = sqrt.(abs.(rel_pos'.*rel_pos))              
 
-	# Giving back the whole energy of the system
+	# Preventing zero-division along diagonal
+	for i in 1:length(nb.x) xvalue_ij[i,i] = 1 end        
+
+	# Calculating the matrix with the potential energy
+	epot_values = gmm ./ xvalue_ij                        
+
+	# Adding up the potential energy of each body to another
+	systemenergy = sum(triu(epot_values))
+
+	# Returning the total systemenergy
 	systemenergy
+	
 end
 
 #-----------------------------------------------------------------------------------------
-"""
-	demo()
 
-	Demonstrate simulation of a simple 2-body problem in a simple 3-step use-case.
-"""
 function demo()
-	# Build the 2-body system:
-	nb = NBody( 20, 1000)								# 20 time units divided into 1000 steps
-	addbody!( nb, [0.0, 1.0], [ 0.8,0.0], 2.0, 1.0)			# Sun (m = 2)
-	addbody!( nb, [0.0,-1.0], [-0.8,0.0], 1.0, 1.0)				# Planet (m = 1)
-	
-	# Calculate the simulation data:
-	(t,x,e) = simulate(nb)
-
-	# Run the animation:
-	animate( nb, t, x, e)
-end
-
-#-----------------------------------------------------------------------------------------
-"""
-	demo2()
-
-	Demonstrate simulation of a chaotic 3-body system.
-"""
-function demo2()
-	# Build the 3-body system:
-	nb = NBody( 20, 1000)
-	addbody!( nb, [0.0, 1.0],	[ 0.8, 0.0], 	2.0, 2.0)		# Sun 1 (m = 2)
-	addbody!( nb, [0.0,-1.0],	[-0.8, 0.0],	1.0, 1.0)		# Sun 2 (m = 1)
-	addbody!( nb, [3.0, 0.0],	[ 0.0, 0.1],	0.2, 0.2)		# Planet (m = 0.2)
-
-	energy_calc(nb)
-	
-	# Run the simulation:
-	t,x,e = simulate(nb)
-
-	# Run the animation:
-	animate(nb, t, x, e)	
-end
-
-function demo3()
 	"""
 	Demo der Erde
 	Demo zur Implementierung der neuen physikalischen Größen
@@ -308,53 +291,21 @@ function demo3()
 	
 	energy_calc(nb)
 
+
+	forceOnMasses(nb.x, nb.m)
+
+	relloc = relpos(nb.x)
+	relloc'.*relloc
+	sqrt.(abs.(relloc'.*relloc))
+
+	sqrt.(abs.(relloc'.*relloc))
+
 	
 	# Run the simulation:
 	t,x,e = simulate(nb)
 
 	# Run the animation:
 	animate(nb, t, x, e)	
-end
-
-function demo4()
-	# Build the 3-body system:
-	nb = NBody( 20, 1000)
-	addbody!( nb, [0.0, 1.0],	[ 0.8, 0.0], 	2.0)		# Sun 1 (m = 2)
-	addbody!( nb, [0.0,-1.0],	[-0.8, 0.0],	1.0)		# Sun 2 (m = 1)
-	addbody!( nb, [3.0, 0.0],	[ 0.0, 0.1],	0.2)		# Planet (m = 0.2)
-	
-	"""
-	Testverfahren zur Implementierung von energy_calc und RK4
-
-
-	nb.p./nb.m
-	energy_calc(nb)
-
-	sum(diag(diag(energy_calc(nb).*energy_calc(nb)')[3]))
-	length(nb.p)
-	a = (nb.p./nb.m)
-	a[1]*a[1]'
-	diag(a[1]*a[1]')
-	a'
-	b = diag(a*a')
-	b[1][1]
-
-	016*016
-	64*64
-	0.04*0.04
-	0.25*0.25
-
-
-	[[a[1] .* a[1]]; [a[2] .* a[2]]; [a[3] .* a[3]]]
-	[a[1:length(a)].*a[1:length(a)]]
-	"""
-
-
-	# Run the simulation:
-	#t,x = simulate(nb)
-
-	# Run the animation:
-	#animate(nb, t, x)	
 end
 
 end		# of NBodies

@@ -51,7 +51,7 @@ NBodies.addbody!( nb, [ 0.0,            0.0],	[ 0.0,             0.0], 	m_earth,
 NBodies.addbody!( nb, [ d_moon_earth,   0.0],	[ 0.0, m_moon*v_moon_y],	m_moon,  20*size_moon)		# Moon
 
 """
-Schritt 4: Hinzufügen eines dritten Körpers in das System
+Schritt 4: Hinzufügen eines dritten Körpers in das Systems
 
 Deklaration der Variablen des neuen Körpers
 Hinzufügen des Körpers in das System
