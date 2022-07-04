@@ -134,7 +134,8 @@ function rk4!( nb::NBody)
 	
 	# Evaluation of full-step:
 	nb.x = nb.x + nb.dt * 1/6 * (pk1./nb.m + 2pk2./nb.m + 2pk3./nb.m + pk4./nb.m)
-	nb.p = nb.p + nb.dt * 1/6 * (forceOnMasses(xk1, nb.m) + 2*forceOnMasses(xk2, nb.m) + 2*forceOnMasses(xk3, nb.m) + forceOnMasses(xk4, nb.m))
+	nb.p = nb.p + nb.dt * 1/6 * (forceOnMasses(xk1, nb.m) + 2*forceOnMasses(xk2, nb.m) 
+								 + 2*forceOnMasses(xk3, nb.m) + forceOnMasses(xk4, nb.m))
 
 end
 
@@ -168,21 +169,6 @@ end
 
 #-----------------------------------------------------------------------------------------
 """
-	relpos(locations::Vector)
-
-	Function to calculate the relative positions from each body to another
-
-"""
-function relpos(locations::Vector)
-
-	locnPerBody = repeat(locations,1,length(locations))	
-	relpos = locnPerBody - permutedims(locnPerBody)			
-
-	relpos
-end
-
-#-----------------------------------------------------------------------------------------
-"""
 	animate( nb::NBody, t, x, e)
 
 	Animate the simulation data (t,x,e) of the given NBody system.
@@ -204,8 +190,8 @@ function animate( nb::NBody, t, x, e)
 	fig = Figure(resolution=(animation_size, animation_size))
 	ax = Axis(fig[1, 1], xlabel = "x", ylabel = "y", title = "N-body 2D Motion")
 	limits!( ax, -limits, limits, -limits, limits)
-	scatter!( ax, x_current, y_current, markersize=((animation_size/limits)*nb.size), color=:blue) 	# Calculating the size of each body
-																									# depending on the size of the animation
+	scatter!( ax, x_current, y_current, markersize=((animation_size/limits)*nb.size), color=:blue) 	
+	# Markersize: Calculating the size of each bodyin the animation depending on the size of the animation
 	text!( timestamp, position=(-text_pos, -text_pos), textsize=30, align=(:left,:center))
 	text!( energy, position=(-text_pos, text_pos), textsize=20, align=(:left,:center))
 	display(fig)
@@ -220,6 +206,21 @@ function animate( nb::NBody, t, x, e)
 
 		sleep(1e-4)
 	end
+end
+
+#-----------------------------------------------------------------------------------------
+"""
+	relpos(locations::Vector)
+
+	Function to calculate the relative positions from each body to another
+
+"""
+function relpos(locations::Vector)
+
+	locnPerBody = repeat(locations,1,length(locations))	
+	relpos = locnPerBody - permutedims(locnPerBody)			
+
+	relpos
 end
 
 #-----------------------------------------------------------------------------------------
