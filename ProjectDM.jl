@@ -3,14 +3,6 @@
 	NBodies - Version 5
 
 A system of N interacting bodies moving in dim dimensions over time T in res timesteps.
-I noticed in version 4 that the Sun and planet gradually move further away from each other,
-which of course is to be expected if I use Euler's method, which always errs outward from
-any curved trajectory. So in version 5, I need to replace Euler's method by the Runge-Kutta-2
-method. And this in turn means I must refactor the Euler code out into its own method, then
-replace it by Runge-Kutta-2.
-
-This solution worked so well that I then added a second, more complicated use-case (demo2()),
-in which three bodies (2 Suns and a very lonely! planet) orbit around each other.
 
 Author: Niall Palfreyman, 29/05/2022.
 """
@@ -68,7 +60,7 @@ end
 """
 	addbody!( nbody::NBody, x0::Vector{Float64}, p0::Vector{Float64}, m::Float64=1)
 
-Add to the system a new body with initial position and momentum x0, p0, and with mass m. And size size.
+Add to the system a new body with initial position and momentum x0, p0, with mass m and the diameter size.
 The new structure elements nb.x and nb.p represent the current position and momentum of the
 bodies, which will be constantly updated during the simulation.
 """
@@ -201,15 +193,21 @@ function animate( nb::NBody, t, x, e)
 	x_current = Observable( map( bodycoords->bodycoords[1], x[1]))
 	y_current = Observable( map( bodycoords->bodycoords[2], x[1]))
 	timestamp = Observable( string( "t = ", round(t[1], digits=2)))
-	energy  = Observable( string( "energy = ", e[1]))
+	energy  = Observable( string( "System-Energy = ", e[1]))
+
+	# Variables for the animation
+	limits = 8e8
+	text_pos = 0.9*limits
+	animation_size = 900
 
 	# Prepare the animation graphics:
-	fig = Figure(resolution=(900, 900))
+	fig = Figure(resolution=(animation_size, animation_size))
 	ax = Axis(fig[1, 1], xlabel = "x", ylabel = "y", title = "N-body 2D Motion")
-	limits!( ax, -1e9, 1e9, -1e9, 1e9)
-	scatter!( ax, x_current, y_current, markersize=(nb.size), color=:blue)
-	text!( timestamp, position=(-0.9e9, -0.9e9), textsize=30, align=(:left,:center))
-	text!( energy, position=(-0.9e9, 0.9e9), textsize=20, align=(:left,:center))
+	limits!( ax, -limits, limits, -limits, limits)
+	scatter!( ax, x_current, y_current, markersize=((animation_size/limits)*nb.size), color=:blue) 	# Calculating the size of each body
+																									# depending on the size of the animation
+	text!( timestamp, position=(-text_pos, -text_pos), textsize=30, align=(:left,:center))
+	text!( energy, position=(-text_pos, text_pos), textsize=20, align=(:left,:center))
 	display(fig)
 
 
@@ -218,7 +216,7 @@ function animate( nb::NBody, t, x, e)
 		x_current[] = map( bodycoords->bodycoords[1], x[i])
 		y_current[] = map( bodycoords->bodycoords[2], x[i])
 		timestamp[] = string( "t = ", round(t[i], digits=2))
-		energy[]	= string( "energy = ", e[i])
+		energy[]	= string( "System-Energy = ", e[i])
 
 		sleep(1e-4)
 	end
@@ -229,6 +227,7 @@ end
 	energy_calc(nb::NBody)
 
 	Evaluating the potential energy in the system to check, if the energy stays the same, so the animation is realistic or not
+	Values can fluctuate a bit, due to the calculation with big timesteps
 	Formula: EPot = G * M * m * (1/r1 - 1/r2)
 """
 function energy_calc(nb::NBody)
@@ -237,7 +236,7 @@ function energy_calc(nb::NBody)
 	G = 6.67259e-11		
 
 	# Precalculating -(G * M * m)
-	gmm = -(G * nb.m * nb.m')
+	gmm = (G * nb.m * nb.m')
 
 	# Calculating the relative positions of each body to another
 	rel_pos = relpos(nb.x)
@@ -257,55 +256,6 @@ function energy_calc(nb::NBody)
 	# Returning the total systemenergy
 	systemenergy
 	
-end
-
-#-----------------------------------------------------------------------------------------
-
-function demo()
-	"""
-	Demo der Erde
-	Demo zur Implementierung der neuen physikalischen Größen
-	Gravitatonskonstante etc.
-
-	m_erde = 5,972 *10^24kg
-	m_mond = 7,3483 * 10^22kg
-
-	G =  6,67259 * 10^-11(N*m^2)/kg^2
-
-	Distannz Mond zu Erde: 384 400km
-
-	Größenverhältnis Erde zu Mond: 1 zu 3,7
-	"""
-
-	# Build the 3-body system:
-	nb = NBody(10000000, 1000)
-
-	m_sun = 1.989e30 #kg 
-	v_moon = 1023 #m/s
-	m_moon = 7.3483e22 #kg
-
-
-	addbody!( nb, [ 0.0, 0.0],			[ 0.0, 	0.0], 			5.972e24, 		74.0)		# Earth
-	addbody!( nb, [ 384400000.0, 0.0],	[ 0.0, m_moon*v_moon],	m_moon,      	20.0)		# Moon
-	addbody!( nb, [ -384400000.0, 0.0],	[ 0.0, -m_moon*v_moon],	m_moon,      	20.0)
-	
-	energy_calc(nb)
-
-
-	forceOnMasses(nb.x, nb.m)
-
-	relloc = relpos(nb.x)
-	relloc'.*relloc
-	sqrt.(abs.(relloc'.*relloc))
-
-	sqrt.(abs.(relloc'.*relloc))
-
-	
-	# Run the simulation:
-	t,x,e = simulate(nb)
-
-	# Run the animation:
-	animate(nb, t, x, e)	
 end
 
 end		# of NBodies

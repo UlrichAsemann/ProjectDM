@@ -21,12 +21,11 @@ To-Do:
 	- Weitere Klasse/Datei, die auf Klasse zugreift (Serverklasse)			DONE
 
 	- Berechnung der Energieerhaltung										DONE
-	- Code-Dokumentation	(schön und ordentlich)							Angefangen (Löschen von Demo)
+	- Code-Dokumentation	(schön und ordentlich)							DONE
 	- Anpassung Berechnung Gravitation										DONE
 		- Gravitationskonstante												DONE
 		- Abstände															DONE
 		- Geschwindigkeit													DONE
-		- Fokus der Animation 												? (Größe der Achsen anpassen mit Entfernungen der Planeten)
 		- Größe Himmelskörper anpassen										DONE
 
 	- RK4 eventuell RK8, da Energieschwankung sehr hoch						DONE
@@ -34,12 +33,12 @@ To-Do:
 
 
 	- Eigene Demo schreiben für Projekt
-		- 3-Körper System
-		- Fokus auf Effizienz
-		- Fokus auf Genauigkeit (Exaktes System)
-		- wenig Zeit bis neues Gleichgewicht entsteht
-		- keine Kollision der Körper miteinander
-		- Anpassung Simulationslänge
-		- Geschichte wird in Demo erzählt (Bewertung des herausgefundenen Systems)
+		- 3-Körper System															DONE
+		- Fokus auf Effizienz														DONE
+		- Fokus auf Genauigkeit (Exaktes System)									DONE
+		- wenig Zeit bis neues Gleichgewicht entsteht								DONE
+		- keine Kollision der Körper miteinander									DONE
+		- Anpassung Simulationslänge												DONE
+		- Geschichte wird in Demo erzählt (Bewertung des herausgefundenen Systems)	DONE
 
 """;
